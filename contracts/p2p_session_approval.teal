@@ -1,0 +1,123 @@
+#pragma version 6
+txn ApplicationID
+int 0
+==
+bnz main_l8
+txna ApplicationArgs 0
+byte "stake"
+==
+bnz main_l7
+txna ApplicationArgs 0
+byte "end_session"
+==
+bnz main_l6
+txna ApplicationArgs 0
+byte "distribute"
+==
+bnz main_l5
+err
+main_l5:
+byte "session_ended"
+app_global_get
+int 1
+==
+assert
+txn Sender
+byte "host"
+app_global_get
+==
+assert
+itxn_begin
+int pay
+itxn_field TypeEnum
+byte "host"
+app_global_get
+itxn_field Receiver
+byte "total_pool"
+app_global_get
+int 50
+*
+int 100
+/
+itxn_field Amount
+itxn_submit
+itxn_begin
+int pay
+itxn_field TypeEnum
+byte "quiz_winner"
+app_global_get
+itxn_field Receiver
+byte "total_pool"
+app_global_get
+int 40
+*
+int 100
+/
+itxn_field Amount
+itxn_submit
+itxn_begin
+int pay
+itxn_field TypeEnum
+byte "platform"
+app_global_get
+itxn_field Receiver
+byte "total_pool"
+app_global_get
+int 10
+*
+int 100
+/
+itxn_field Amount
+itxn_submit
+int 1
+return
+main_l6:
+txn Sender
+byte "host"
+app_global_get
+==
+assert
+byte "session_ended"
+int 1
+app_global_put
+byte "quiz_winner"
+txna ApplicationArgs 1
+app_global_put
+int 1
+return
+main_l7:
+txn TypeEnum
+int pay
+==
+assert
+byte "session_ended"
+app_global_get
+int 0
+==
+assert
+byte "total_pool"
+byte "total_pool"
+app_global_get
+txn Amount
++
+app_global_put
+int 1
+return
+main_l8:
+byte "host"
+txna ApplicationArgs 0
+app_global_put
+byte "platform"
+txna ApplicationArgs 1
+app_global_put
+byte "total_pool"
+int 0
+app_global_put
+byte "session_ended"
+int 0
+app_global_put
+byte "quiz_winner"
+byte ""
+app_global_put
+int 1
+return

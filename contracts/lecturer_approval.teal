@@ -1,0 +1,87 @@
+#pragma version 6
+txn ApplicationID
+int 0
+==
+bnz main_l6
+txna ApplicationArgs 0
+byte "stake"
+==
+bnz main_l5
+txna ApplicationArgs 0
+byte "distribute"
+==
+bnz main_l4
+err
+main_l4:
+txn Sender
+byte "lecturer"
+app_global_get
+==
+assert
+byte "session_ended"
+app_global_get
+int 0
+==
+assert
+byte "session_ended"
+int 1
+app_global_put
+itxn_begin
+int pay
+itxn_field TypeEnum
+byte "lecturer"
+app_global_get
+itxn_field Receiver
+byte "total_pool"
+app_global_get
+int 80
+*
+int 100
+/
+itxn_field Amount
+itxn_submit
+itxn_begin
+int pay
+itxn_field TypeEnum
+byte "platform"
+app_global_get
+itxn_field Receiver
+byte "total_pool"
+app_global_get
+int 20
+*
+int 100
+/
+itxn_field Amount
+itxn_submit
+int 1
+return
+main_l5:
+byte "session_ended"
+app_global_get
+int 0
+==
+assert
+byte "total_pool"
+byte "total_pool"
+app_global_get
+txn Amount
++
+app_global_put
+int 1
+return
+main_l6:
+byte "lecturer"
+txna ApplicationArgs 0
+app_global_put
+byte "platform"
+txna ApplicationArgs 1
+app_global_put
+byte "total_pool"
+int 0
+app_global_put
+byte "session_ended"
+int 0
+app_global_put
+int 1
+return
